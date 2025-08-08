@@ -200,16 +200,30 @@
       }
     }
   
-    function normalizeEntities(data) {
-      // Accept: { key: value } or [ { entity, value|answer }, ... ]
-      if (Array.isArray(data)) {
-        return data.map((d) => ({ key: d.entity || d.key || d.name || 'Field', value: d.value ?? d.answer ?? '' }));
+    function normalizeEntities(data, parentKey = '') {
+        const items = [];
+      
+        if (Array.isArray(data)) {
+          data.forEach(d => {
+            items.push({
+              key: d.entity || d.key || d.name || parentKey || 'Field',
+              value: d.value ?? d.answer ?? ''
+            });
+          });
+        } else if (typeof data === 'object' && data) {
+          for (const k in data) {
+            const fullKey = parentKey ? `${parentKey}.${k}` : k;
+            if (typeof data[k] === 'object' && data[k] !== null) {
+              items.push(...normalizeEntities(data[k], fullKey));
+            } else {
+              items.push({ key: fullKey, value: data[k] });
+            }
+          }
+        }
+      
+        return items;
       }
-      if (typeof data === 'object' && data) {
-        return Object.keys(data).map((k) => ({ key: k, value: data[k] }));
-      }
-      return [];
-    }
+      
   
     function renderEntities(data) {
       const items = normalizeEntities(data);
@@ -281,5 +295,4 @@
     els.process.addEventListener('click', processTranscript);
     els.copyAll.addEventListener('click', copyAllEntities);
   })();
-
   
