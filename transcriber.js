@@ -204,11 +204,15 @@
         const items = [];
       
         if (Array.isArray(data)) {
-          data.forEach(d => {
-            items.push({
-              key: d.entity || d.key || d.name || parentKey || 'Field',
-              value: d.value ?? d.answer ?? ''
-            });
+          data.forEach((d) => {
+            if (typeof d === 'object' && d !== null) {
+              items.push(...normalizeEntities(d, parentKey));
+            } else {
+              items.push({
+                key: parentKey || 'Field',
+                value: String(d)
+              });
+            }
           });
         } else if (typeof data === 'object' && data) {
           for (const k in data) {
@@ -216,9 +220,11 @@
             if (typeof data[k] === 'object' && data[k] !== null) {
               items.push(...normalizeEntities(data[k], fullKey));
             } else {
-              items.push({ key: fullKey, value: data[k] });
+              items.push({ key: fullKey, value: String(data[k]) });
             }
           }
+        } else {
+          items.push({ key: parentKey || 'Field', value: String(data) });
         }
       
         return items;
