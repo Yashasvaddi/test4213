@@ -1,5 +1,5 @@
 (function () {
-    const API_BASE = 'http://127.0.0.1:8000';
+    const API_BASE = 'https://keywordextractor-95fn.onrender.com';
   
     const els = {
       start: document.getElementById('btnStart'),
@@ -281,4 +281,5 @@
     els.process.addEventListener('click', processTranscript);
     els.copyAll.addEventListener('click', copyAllEntities);
   })();
+
   
