@@ -1,3 +1,4 @@
+
 (function () {
     const API_BASE = 'https://keywordextractor-95fn.onrender.com';
   
@@ -140,6 +141,16 @@
       try { recog.start(); } catch {}
     }
   
+    function updateSummary(text) {
+        const summaryEl = document.getElementById('summaryText');
+        summaryEl.textContent = text || 'No summary available.';
+      }
+      
+      // Example usage after you fetch/process data:
+    
+    
+
+
     function stopListening() {
       if (recog && listening) {
         try { recog.stop(); } catch {}
@@ -158,48 +169,69 @@
     }
   
     async function processTranscript() {
-      const transcript = els.transcriptText.value.trim();
-      if (!transcript) {
+    const transcript = els.transcriptText.value.trim();
+    if (!transcript) {
         showToast('Transcript is empty.');
         return;
-      }
-      updateStatus('Sending…', 'sending');
-      els.process.disabled = true;
-      try {
-        // Send full transcript as a single JSON string field
+    }
+    updateStatus('Sending…', 'sending');
+    els.process.disabled = true;
+
+    try {
+        // 1️⃣ First API Call: Entity extraction
         const res = await fetch(API_BASE + '/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: transcript }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: transcript }),
         });
+
         if (!res.ok) throw new Error('HTTP ' + res.status);
+
         const data = await res.json();
-  
+        let payload;
+
         const path = (data && (data.json_path || data.path || data.file)) || '';
         if (path) {
-          const jsonUrl = toAbsoluteUrl(path);
-          const jres = await fetch(jsonUrl, { cache: 'no-store' });
-          if (!jres.ok) throw new Error('JSON fetch failed ' + jres.status);
-          const payload = await jres.json();
-          renderEntities(payload);
+        const jsonUrl = toAbsoluteUrl(path);
+        const jres = await fetch(jsonUrl, { cache: 'no-store' });
+        if (!jres.ok) throw new Error('JSON fetch failed ' + jres.status);
+        payload = await jres.json();
         } else if (data && (typeof data === 'object' || Array.isArray(data))) {
-          // Backend returned entities directly
-          renderEntities(data);
+        payload = data;
         } else {
-          throw new Error('Unexpected API response shape');
+        throw new Error('Unexpected API response shape');
         }
-  
-        showToast('Entities loaded');
-        updateStatus('Idle');
-      } catch (err) {
-        console.error(err);
+
+        // Render extracted entities
+        renderEntities(payload);
+
+        // 2️⃣ Second API Call: Summary
+        const summaryRes = await fetch(API_BASE + '/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: transcript }), // you can also pass `payload` if needed
+        });
+
+        if (!summaryRes.ok) throw new Error('Summary API HTTP ' + summaryRes.status);
+
+        const summaryData = await summaryRes.json();
+
+        // Update summary panel
+        if (summaryData && summaryData.summary) {
+            updateSummary(summaryData)
+        }
+
+        updateStatus('Done', 'done');
+
+    } catch (err) {
+        console.error('Error processing transcript:', err);
+        showToast('Error: ' + err.message, 'error');
         updateStatus('Error', 'error');
-        showToast('API error. See console.');
-      } finally {
+    } finally {
         els.process.disabled = false;
-      }
     }
-  
+    }
+
     function normalizeEntities(data, parentKey = '') {
       const items = [];
     
@@ -310,4 +342,3 @@
     els.copyAll.addEventListener('click', copyAllEntities);
   })();
   
-
