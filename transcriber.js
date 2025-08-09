@@ -218,7 +218,7 @@
 
         // Update summary panel
         if (summaryData && summaryData.summary) {
-            updateSummary(summaryData)
+            updateSummary(summaryData.summary)
         }
 
         updateStatus('Done', 'done');
