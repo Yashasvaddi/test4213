@@ -146,8 +146,50 @@
         summaryEl.textContent = text || 'No summary available.';
       }
       
-      // Example usage after you fetch/process data:
+
+    let mediaRecorder;
+    let audioChunks = [];
+
+    document.getElementById('btnStart').addEventListener('click', async () => {
+        audioChunks = [];
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
     
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        };
+    
+        mediaRecorder.onstop = () => {
+            document.getElementById('btnSave').disabled = false;
+        };
+    
+        mediaRecorder.start();
+    });
+    
+    document.getElementById('btnStop').addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+    });
+    
+    document.getElementById('btnSave').addEventListener('click', () => {
+        if (audioChunks.length) {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'recording.webm'; // Change to .wav if you convert format
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    });
+
+
+
+
     
 
 
