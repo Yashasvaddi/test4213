@@ -125,6 +125,26 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
     line-height: 1.4;
   }
   
+
+  .btn-save {
+    background-color: #28a745; /* Bootstrap-like green */
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-save:hover:not(:disabled) {
+    background-color: #218838;
+  }
+  
+  .btn-save:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
 /* Signature interaction: subtle magnetic hover for primary buttons */
 .btn-primary, .btn-hero {
 position: relative; isolation: isolate; overflow: hidden;
