@@ -201,36 +201,44 @@
     }
   
     function normalizeEntities(data, parentKey = '') {
-        const items = [];
-      
-        if (Array.isArray(data)) {
-          // Loop through array and keep index for context
-          data.forEach((item, index) => {
-            if (typeof item === 'object' && item !== null) {
-              items.push(...normalizeEntities(item, `${parentKey}[${index}]`));
-            } else {
-              items.push({ key: `${parentKey}[${index}]`, value: String(item) });
-            }
-          });
-        } 
-        else if (typeof data === 'object' && data !== null) {
-          for (const k in data) {
-            const fullKey = parentKey ? `${parentKey}.${k}` : k;
-            if (typeof data[k] === 'object' && data[k] !== null) {
-              items.push(...normalizeEntities(data[k], fullKey));
-            } else {
-              items.push({ key: fullKey, value: String(data[k] ?? '') });
-            }
+      const items = [];
+    
+      if (Array.isArray(data)) {
+        data.forEach((item, index) => {
+          if (item && typeof item === 'object') {
+            // Recursively flatten objects inside arrays
+            items.push(...normalizeEntities(item, `${parentKey}[${index}]`));
+          } else {
+            items.push({
+              key: `${parentKey}[${index}]`,
+              value: String(item ?? '')
+            });
           }
-        } 
-        else {
-          items.push({ key: parentKey || 'Field', value: String(data ?? '') });
-        }
+        });
+      } else if (data && typeof data === 'object') {
+        Object.entries(data).forEach(([k, v]) => {
+          const newKey = parentKey ? `${parentKey}.${k}` : k;
+          if (v && typeof v === 'object') {
+            // Go deeper if still object or array
+            items.push(...normalizeEntities(v, newKey));
+          } else {
+            items.push({
+              key: newKey,
+              value: String(v ?? '')
+            });
+          }
+        });
+      } else {
+        items.push({
+          key: parentKey,
+          value: String(data ?? '')
+        });
+      }
+    
+      return items;
+    }
+
       
-        return items;
-      }      
-      
-  
     function renderEntities(data) {
       const items = normalizeEntities(data);
       els.entitiesList.innerHTML = '';
@@ -302,3 +310,4 @@
     els.copyAll.addEventListener('click', copyAllEntities);
   })();
   
+
