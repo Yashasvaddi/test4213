@@ -204,31 +204,31 @@
         const items = [];
       
         if (Array.isArray(data)) {
-          data.forEach((d) => {
-            if (typeof d === 'object' && d !== null) {
-              items.push(...normalizeEntities(d, parentKey));
+          // Loop through array and keep index for context
+          data.forEach((item, index) => {
+            if (typeof item === 'object' && item !== null) {
+              items.push(...normalizeEntities(item, `${parentKey}[${index}]`));
             } else {
-              items.push({
-                key: parentKey || 'Field',
-                value: String(d)
-              });
+              items.push({ key: `${parentKey}[${index}]`, value: String(item) });
             }
           });
-        } else if (typeof data === 'object' && data) {
+        } 
+        else if (typeof data === 'object' && data !== null) {
           for (const k in data) {
             const fullKey = parentKey ? `${parentKey}.${k}` : k;
             if (typeof data[k] === 'object' && data[k] !== null) {
               items.push(...normalizeEntities(data[k], fullKey));
             } else {
-              items.push({ key: fullKey, value: String(data[k]) });
+              items.push({ key: fullKey, value: String(data[k] ?? '') });
             }
           }
-        } else {
-          items.push({ key: parentKey || 'Field', value: String(data) });
+        } 
+        else {
+          items.push({ key: parentKey || 'Field', value: String(data ?? '') });
         }
       
         return items;
-      }
+      }      
       
   
     function renderEntities(data) {
