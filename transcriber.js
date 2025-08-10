@@ -136,6 +136,15 @@
           if (!text) interimEl.remove();
           interimEl = null;
         }
+        if (els.start.getAttribute('aria-pressed') === 'true') {
+            try {
+              recog.start();
+              listening = true;
+              updateStatus('Listening', 'live');
+            } catch (e) {
+              console.error('Auto-restart error:', e);
+            }
+          }
       };
   
       try { recog.start(); } catch {}
@@ -384,3 +393,4 @@
     els.copyAll.addEventListener('click', copyAllEntities);
   })();
   
+
