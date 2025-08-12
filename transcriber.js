@@ -1,6 +1,6 @@
 
 (function () {
-  const API_BASE = 'https://test-lwxn.onrender.com';
+  const API_BASE = 'https://keywordextractor-95fn.onrender.com';
 
   const els = {
     start: document.getElementById('btnStart'),
@@ -229,7 +229,7 @@
   els.process.disabled = true;
 
   try {
-
+      let lastApiResponse = null;
       // 2️⃣ Second API Call: Summary
       const summaryRes = await fetch(API_BASE + '/summary', {
       method: 'POST',
@@ -256,9 +256,68 @@
       body: JSON.stringify({ text: transcript }),
       });
 
+
       if (!res.ok) throw new Error('HTTP ' + res.status);
 
       const data = await res.json();
+      lastApiResponse = data; // store it for later download
+      renderEntitiesNormally(lastApiResponse);
+
+
+      function saveAsNestedJSON() {
+        if (!lastApiResponse) {
+          alert("No data to save!");
+          return;
+        }
+      
+        const drilledData = unflattenObject(lastApiResponse);
+      
+        const blob = new Blob([JSON.stringify(drilledData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+      
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'entities.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      
+        URL.revokeObjectURL(url);
+      }
+      
+      document.getElementById("saveJsonBtn").addEventListener("click", saveAsNestedJSON);
+      
+
+
+      function unflattenObject(data) {
+        if (typeof data !== "object" || data === null) return data;
+      
+        const result = {};
+      
+        for (let key in data) {
+          const keys = key
+            .replace(/\[(\w+)\]/g, '.$1') // change [0] to .0
+            .split('.');
+      
+          keys.reduce((acc, k, i) => {
+            if (i === keys.length - 1) {
+              acc[k] = data[key];
+            } else {
+              if (!acc[k]) {
+                acc[k] = isNaN(keys[i + 1]) ? {} : [];
+              }
+              return acc[k];
+            }
+            return acc;
+          }, result);
+        }
+      
+        return result;
+      }
+      
+
+
+
       let payload;
 
       const path = (data && (data.json_path || data.path || data.file)) || '';
@@ -322,6 +381,7 @@
   
     return items;
   }
+
 
   function renderEntities(data) {
     const items = normalizeEntities(data);
@@ -393,6 +453,4 @@
   els.process.addEventListener('click', processTranscript);
   els.copyAll.addEventListener('click', copyAllEntities);
 })();
-
-
 
