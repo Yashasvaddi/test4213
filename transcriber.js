@@ -1,6 +1,6 @@
 
 (function () {
-  const API_BASE = 'https://keywordextractor-95fn.onrender.com';
+  const API_BASE = 'https://test-lwxn.onrender.com';
 
   const els = {
     start: document.getElementById('btnStart'),
@@ -453,4 +453,5 @@
   els.process.addEventListener('click', processTranscript);
   els.copyAll.addEventListener('click', copyAllEntities);
 })();
+
 
