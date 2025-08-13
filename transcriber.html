@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Live Audio Transcription & Entity Viewer</title>
+    <meta name="description" content="Live audio transcription in the browser with a chat-like log and editable, copyable entities from a JSON response." />
+    <link rel="canonical" href="C:\New folder\codes\college stuff\test\transcriber.html" />
+
+    <meta property="og:title" content="Live Audio Transcription & Entity Viewer" />
+    <meta property="og:description" content="Transcribe speech live and visualize extracted entities. Edit and copy results easily." />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="transcriber.css" />
+    <script defer src="transcriber.js"></script>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <nav class="container nav" aria-label="Primary">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <span class="brand-name">Hear • Parse • Display</span>
+        </div>
+        <!-- <a class="nav-link" href="/" aria-label="Back to app home">Home</a> -->
+      </nav>
+    </header>
+
+    <main class="container main" role="main">
+      <h1 class="page-title">Live Audio Transcription</h1>
+      <p class="page-sub">Speak to transcribe. Send the full transcript to your API and review the extracted entities on the right.</p>
+
+      <section class="controls" aria-label="Recording controls">
+        <div class="controls-left">
+          <button id="btnStart" class="btn btn-primary" aria-pressed="false">
+            <span class="btn-dot" aria-hidden="true"></span>
+            Start Mic
+          </button>
+          <button id="btnStop" class="btn" disabled>Stop</button>
+          <button id="btnClear" class="btn btn-outline">Clear</button>
+          <button id="btnSave" class="btn btn-outline" disabled>Save Recording</button>
+        </div>
+        <div class="controls-right">
+          <button id="saveJsonBtn">Save JSON</button>
+          <button id="btnProcess" class="btn btn-hero" title="Send transcript to API" type="button">Process Transcript</button>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Transcription and Entities">
+        <article class="panel panel-left" aria-labelledby="logTitle">
+          <div class="panel-header">
+            <h2 id="logTitle" class="panel-title">Transcription Log</h2>
+            <div class="status" id="statusBadge" aria-live="polite">Idle</div>
+          </div>
+          <div id="chatLog" class="chat-log" role="log" aria-live="polite" aria-relevant="additions text">
+            <!-- Chat lines will appear here -->
+          </div>
+          <div class="full-transcript">
+            <label for="transcriptText" class="label">Full Transcript</label>
+            <textarea id="transcriptText" class="textarea" rows="4" placeholder="The complete transcript will appear here..." aria-label="Full transcript"></textarea>
+          </div>
+        </article>
+
+        <aside class="panel panel-right" aria-labelledby="entitiesTitle">
+          <div class="prescription-form">
+            <div class="form-header">
+              <h2 class="form-title">Medical Prescription Form</h2>
+              <button class="btn-clear">Clear Form</button>
+            </div>
+        
+            <div class="doctor-info">
+              <div class="doctor-logo">R</div>
+              <div>
+                <strong>Dr. [Your Name Here]</strong><br>
+                <span>General Practitioner • MD</span>
+              </div>
+            </div>
+        
+            <hr class="divider">
+        
+            <section class="patient-info">
+              <h3>PATIENT INFORMATION</h3>
+              <div class="input-row">
+                <label>Patient:</label>
+                <input type="text" placeholder="Patient name">
+              </div>
+              <div class="input-row">
+                <label>Age:</label>
+                <input type="text" placeholder="Age">
+              </div>
+              <div class="input-row">
+                <label>Date:</label>
+                <input type="text" value="13-08-2025">
+              </div>
+            </section>
+        
+            <section class="medical-summary">
+              <h3>MEDICAL SUMMARY</h3>
+              <textarea id="medicalSummary" placeholder="Medical summary will appear here after processing..."></textarea>
+            </section>            
+        
+            <!-- Symptoms Section -->
+            <section id="symptomsSection" class="form-section">
+              <h3>SYMPTOMS</h3>
+              <div class="section-content"></div>
+            </section>
+
+            <!-- Complaints Section -->
+            <section id="complaintsSection" class="form-section">
+              <h3>COMPLAINTS</h3>
+              <div class="section-content"></div>
+            </section>
+
+            <!-- Prescriptions Section -->
+            <section id="prescriptionsSection" class="form-section">
+              <h3>MEDICINE PRESCRIPTION</h3>
+              <div class="section-content"></div>
+            </section>
+
+            <!-- Examination Section -->
+            <section id="examinationsSection" class="form-section">
+              <h3>EXAMINATIONS</h3>
+              <div class="section-content"></div>
+            </section>
+
+            <!-- Allergy Section -->
+            <section id="allergiesSection" class="form-section">
+              <h3>ALLERGIES</h3>
+              <div class="section-content"></div>
+            </section>
+
+        
+            <div class="form-footer">
+              <button class="generate-btn">Generate Prescription</button>
+            </div>
+          </div>
+        </aside>        
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container foot">
+        <small>Mic transcription uses the Web Speech API (Chrome recommended). API base: <code>http://127.0.0.1:8000</code></small>
+      </div>
+    </footer>
+  </body>
+</html>
