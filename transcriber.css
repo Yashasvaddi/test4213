@@ -284,22 +284,32 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
   margin-bottom: 6px;
 }
 
-/* Data Items */
+/* Data Items in grid layout */
 .prescription-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* three equal columns */
+  gap: 8px;
   font-size: 13px;
-  padding: 4px 0;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee; /* optional row separator */
 }
 
-.prescription-item label {
-  min-width: 100px;
+.prescription-item .header {
   font-weight: bold;
   color: #444;
 }
 
-.prescription-item span {
+.prescription-item .value {
   color: #222;
 }
+
+.prescription-item .remarks {
+  grid-column: 1 / span 3; /* span across all columns */
+  margin-top: 4px;
+  font-style: italic;
+  color: #555;
+}
+
 /* Remove input-box style for read-only fields */
 .input-row input {
   border: none;
