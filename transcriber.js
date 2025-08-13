@@ -496,15 +496,22 @@
     const button = section.querySelector('.add-btn');
     document.getElementById('medicinesList').innerHTML = '';
     data.to_MEDPRESCRIPTION.forEach(med => {
-      const medDiv = document.createElement('div');
-      medDiv.className = 'medicine-item';
-      medDiv.innerHTML = `
-        <strong>${med.MedicineNameCase}</strong> - ${med.Dose}${med.DoseUnit} for ${med.Period} ${med.PeriodUnit}<br>
-        <em>${med.Remarks}</em>
-      `;
-      section.insertBefore(medDiv, button);
-    });
-  }
+    const medDiv = document.createElement('div');
+    medDiv.className = 'medicine-item';
+    
+    medDiv.innerHTML = `
+      <div class="med-row">
+        <div><strong>Medicine:</strong> ${med.MedicineNameCase}</div>
+        <div><strong>Dose:</strong> ${med.Dose || ''} ${med.DoseUnit || ''}</div>
+        <div><strong>Period:</strong> ${med.Period || ''} ${med.PeriodUnit || ''}</div>
+      </div>
+      <div class="remarks-row">
+        <strong>Remarks:</strong> ${med.Remarks || ''}
+      </div>
+    `;
+    
+    section.insertBefore(medDiv, button);
+  });
   
   function populateFormFromJson(data) {
     // Symptoms
@@ -594,4 +601,5 @@
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
+
 
