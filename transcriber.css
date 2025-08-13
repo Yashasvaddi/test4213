@@ -281,18 +281,21 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
   font-size: 15px;
   font-weight: bold;
   color: #6a11cb;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
 }
 
-/* Data Items */
 .prescription-item {
   display: flex;
+  flex-wrap: wrap;
   font-size: 13px;
-  padding: 4px 0;
+  padding: 6px 0;
+  border-bottom: 1px dashed #ccc;
 }
 
 .prescription-item label {
-  min-width: 100px;
+  min-width: 80px;
   font-weight: bold;
   color: #444;
 }
@@ -300,6 +303,16 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
 .prescription-item span {
   color: #222;
 }
+
+.prescription-remarks {
+  flex: 1 1 100%;
+  margin-top: 4px;
+  font-style: italic;
+  font-family: "Patrick Hand", cursive, sans-serif;
+  font-size: 13px;
+  color: #555;
+}
+
 /* Remove input-box style for read-only fields */
 .input-row input {
   border: none;
@@ -354,3 +367,4 @@ z-index: -1; transition: opacity .2s ease; opacity: 0;
 .btn:hover, .icon-btn:hover { transform: none; box-shadow: none; }
 .btn-dot { animation: none; }
 }
+
