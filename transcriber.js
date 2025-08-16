@@ -239,6 +239,7 @@
 
   try {
       let lastApiResponse = null;
+      let data=null
       // 2️⃣ Second API Call: Summary
       const summaryRes = await fetch(API_BASE + '/summary', {
       method: 'POST',
@@ -586,7 +587,84 @@
     });
   }
   
+  // Make sure this runs after DOM loads
+document.addEventListener("DOMContentLoaded", function() {
+  // Select the button
+  const generateBtn = document.querySelector(".generate-btn");
 
+  // Attach click handler
+  generateBtn.onclick = function() {
+      savePrescription();
+  };
+});
+
+// Your function
+async function savePrescription() {
+  const { jsPDF } = window.jspdf;
+
+  // ✅ use class selector now
+  const element = document.querySelector(".prescription-form");  
+  if (!element) {
+      alert("Prescription form not found!");
+      return;
+  }
+
+  // capture screenshot of the element
+  const canvas = await html2canvas(element, { scale: 2 });
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  pdf.save("prescription.pdf");
+}
+
+function setTodayDate() {
+  const today = new Date();
+
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+
+  const formattedDate = `${day}-${month}-${year}`;
+
+  document.getElementById("dateField").value = formattedDate;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Attach event to the button
+  document.querySelector(".btn-clear").addEventListener("click", () => {
+      const elements = document.querySelectorAll(".prescription-form input, .prescription-form textarea, .prescription-form select");
+      elements.forEach(el => el.value = ""); // clear values
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('medicalSummary');
+  if (!el) return;
+
+  const autoResize = () => {
+    el.style.height = 'auto';                 // reset
+    el.style.height = el.scrollHeight + 'px'; // fit content
+  };
+
+  // Expand as the user types
+  el.addEventListener('input', autoResize);
+
+  // Expose method to set content from JS
+  window.setMedicalSummary = (text) => {
+    el.value = text;   
+    autoResize();       // expand after setting text
+  };
+
+  // ✅ expand if it already has content (e.g., from server)
+  autoResize();
+});
+
+
+window.onload = setTodayDate;
 
   // Wire events
   els.start.addEventListener('click', startListening);
