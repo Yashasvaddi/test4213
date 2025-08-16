@@ -19,6 +19,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="transcriber.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script defer src="transcriber.js"></script>
   </head>
   <body>
@@ -71,7 +73,7 @@
           <div class="prescription-form">
             <div class="form-header">
               <h2 class="form-title">Medical Prescription Form</h2>
-              <button class="btn-clear">Clear Form</button>
+              <button class="btn-clear" type="button">Clear Form</button>
             </div>
         
             <div class="doctor-info">
@@ -96,7 +98,7 @@
               </div>
               <div class="input-row">
                 <label>Date:</label>
-                <input type="text" value="13-08-2025">
+                <input type="text" id="dateField">
               </div>
             </section>
         
