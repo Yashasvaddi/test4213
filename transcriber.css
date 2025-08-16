@@ -231,6 +231,18 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
   margin-bottom: 6px;
 }
 
+.medical-summary textarea#medicalSummary {
+  width: 100%;
+  min-height: 80px;
+  height: auto;
+  max-height: none;
+  overflow-y: auto;     /* show scrollbar if too small */
+  resize: vertical;     /* ✅ allow only Y-axis resize */
+  box-sizing: border-box;
+  line-height: 1.4;
+  font: 14px/1.4 Arial, sans-serif;
+}
+
 /* Input Rows */
 .input-row {
   display: flex;
@@ -304,7 +316,7 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
 }
 
 .prescription-item .remarks {
-  grid-column: 1 / span 3; /* span across all columns */
+  grid-column: 1 / -1; /* span across all columns */
   margin-top: 4px;
   font-style: italic;
   color: #555;
@@ -347,6 +359,23 @@ padding: 10px 14px; font-weight: 600; cursor: pointer; transition: transform .08
 .generate-btn:hover {
   opacity: 0.9;
 }
+
+#saveJsonBtn {
+  background-color: #ffffff;      /* white background */
+  border: 1px solid #ccc;         /* light grey border */
+  color: #000;                    /* black text */
+  padding: 6px 14px;              /* spacing inside button */
+  font-size: 14px;                /* text size */
+  border-radius: 4px;             /* slightly rounded corners */
+  cursor: pointer;                /* pointer on hover */
+  font-family: Arial, sans-serif; /* clean font */
+}
+
+#saveJsonBtn:hover {
+  background-color: #f2f2f2;      /* light grey on hover */
+  border-color: #999;             /* darker border */
+}
+
 
 /* Signature interaction: subtle magnetic hover for primary buttons */
 .btn-primary, .btn-hero {
