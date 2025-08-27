@@ -36,7 +36,7 @@
       e.preventDefault();      // Prevent form submission/reload
       const message = userInput.value.trim();
       if (message !== "") {
-        if(count==0){
+        if(count==0||!(user_id&&session_id)){
            user_id=parseInt(prompt("Enter your user_id"));
            session_id=parseInt(prompt("Enter your session_id"));
           count++;
@@ -47,9 +47,33 @@
     }
   });
 
-  
-  chatbot_send_button.addEventListener("click",()=>sendMessage(document.getElementById('userInput').value));
+ chatbot_send_button.addEventListener("click", () => {
+  const message = userInput.value.trim();
+  if (message === "") return; // ignore empty messages
 
+  // Ask for IDs if first time or IDs not set
+  if (count === 0 || !(user_id && session_id)) {
+    const userInputValue = prompt("Enter your user_id");
+    const sessionInputValue = prompt("Enter your session_id");
+
+    user_id = userInputValue !== null ? parseInt(userInputValue) : null;
+    session_id = sessionInputValue !== null ? parseInt(sessionInputValue) : null;
+
+    if (isNaN(user_id) || isNaN(session_id)) {
+      alert("Invalid IDs. Please enter numeric values.");
+      return; // stop sending message
+    }
+
+    count++;
+  }
+
+  // Send the message
+  sendMessage(message);
+
+  // Clear input
+  userInput.value = "";
+});
+  
   chatBtn.addEventListener('click', () => {
     chatWindow.style.display =
       chatWindow.style.display === 'flex' ? 'none' : 'flex';
@@ -797,6 +821,7 @@ window.onload = setTodayDate;
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
+
 
 
 
