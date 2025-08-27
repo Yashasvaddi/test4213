@@ -26,9 +26,6 @@
   const imgUpload = document.getElementById('imgUpload');
   const micBtn = document.getElementById('micBtn');
   const chatbot_send_button=document.getElementById('chatbot_send_button');
-  const permissionbtn=document.getElementById('permissionbtn');
-
-  permissionbtn.addEventListener('click',requestMicPermission)
   
   let count=0;
   userInput.addEventListener("keydown", (e) => {
@@ -821,6 +818,7 @@ window.onload = setTodayDate;
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
+
 
 
 
