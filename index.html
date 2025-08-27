@@ -67,6 +67,19 @@
             <label for="transcriptText" class="label">Full Transcript</label>
             <textarea id="transcriptText" class="textarea" rows="4" placeholder="The complete transcript will appear here..." aria-label="Full transcript"></textarea>
           </div>
+          <button class="chatbot-btn">💬</button>
+
+        <div class="chatbot-window">
+          <div class="chat-header">Chatbot</div>
+          <div class="chat-body" id="chatBody"></div>
+          <div class="chat-input">
+            <label for="imgUpload">📎</label>
+            <button id="micBtn">🎤</button>
+            <input type="file" id="imgUpload" accept="image/*" style="display:none" />
+            <input type="text" id="userInput" placeholder="Type a message..." />
+            <button type="button" onclick="sendMessage()" id="chatbot_send_button">Send</button>
+          </div>
+        </div>
         </article>
 
         <aside class="panel panel-right" aria-labelledby="entitiesTitle">
