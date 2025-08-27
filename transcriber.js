@@ -768,3 +768,4 @@ window.onload = setTodayDate;
   els.process.addEventListener('click', processTranscript);
 })();
 
+
