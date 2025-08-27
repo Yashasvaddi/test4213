@@ -2,6 +2,9 @@
 (function () {
   const API_BASE = 'https://api.doctorsapp.in/ai';
 
+  let user_id=parseInt(prompt("Enter your user_id"))
+  let session_id=parseInt(prompt("Enter your session_id"))
+
   const els = {
     start: document.getElementById('btnStart'),
     stop: document.getElementById('btnStop'),
@@ -64,7 +67,7 @@
       const res = await fetch(API_BASE+"/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: msg }),
+        body: JSON.stringify({ question: msg, user_id: user_id, session_id: session_id }),
       });
   
       if (!res.ok) {
@@ -99,6 +102,29 @@
     }
     reader.readAsDataURL(file);
   });
+
+  async function requestMicPermission() {
+    try {
+      // Ask for microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      // If successful
+      console.log("Microphone access granted!");
+      
+      // You can now use the audio stream
+      // Example: attach it to an <audio> element
+      const audioElement = document.createElement('audio');
+      audioElement.srcObject = stream;
+      audioElement.autoplay = true;
+      document.body.appendChild(audioElement);
+      
+    } catch (err) {
+      // If user denies or error occurs
+      console.error("Microphone access denied or error:", err);
+    }
+  }
+
+  requestMicPermission();
 
   // 🎤 Speech Recognition
   let recognition;
@@ -767,5 +793,4 @@ window.onload = setTodayDate;
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
-
 
