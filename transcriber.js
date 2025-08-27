@@ -1,6 +1,6 @@
 
 (function () {
-  const API_BASE = 'https://test-lwxn.onrender.com';
+  const API_BASE = 'https://api.doctorsapp.in/ai';
 
   const els = {
     start: document.getElementById('btnStart'),
@@ -17,6 +17,120 @@
     summaryText: document.getElementById('summaryText'),
     medicalSummary: document.getElementById('medicalSummary')
   };
+
+  const chatBtn = document.querySelector('.chatbot-btn');
+  const chatWindow = document.querySelector('.chatbot-window');
+  const chatBody = document.getElementById('chatBody');
+  const userInput = document.getElementById('userInput');
+  const imgUpload = document.getElementById('imgUpload');
+  const micBtn = document.getElementById('micBtn');
+  const chatbot_send_button=document.getElementById('chatbot_send_button');
+
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {  // Check if Enter was pressed
+      e.preventDefault();      // Prevent form submission/reload
+      const message = userInput.value.trim();
+      if (message !== "") {
+        sendMessage(message);  // Your function to handle the message
+        userInput.value = "";  // Clear input
+      }
+    }
+  });
+
+  
+  chatbot_send_button.addEventListener("click",()=>sendMessage(document.getElementById('userInput').value));
+
+  chatBtn.addEventListener('click', () => {
+    chatWindow.style.display =
+      chatWindow.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  function appendMessage(text, type) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('msg', type === 'user' ? 'user-msg' : 'bot-msg');
+    msgDiv.innerText = text;
+    chatBody.appendChild(msgDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  async function sendMessage(msgText) {
+    const msg = msgText || userInput.value.trim();
+    if (!msg) return;
+  
+    appendMessage(msg, 'user');
+    userInput.value = "";
+  
+    try {
+      const res = await fetch(API_BASE+"/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: msg }),
+      });
+  
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+  
+      const data = await res.json();
+  
+      // If backend returns plain text instead of JSON
+      const reply = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+  
+      appendMessage(reply, "bot");
+    } catch (error) {
+      console.error("Error fetching API:", error);
+      appendMessage("Error: " + error.message, "bot");
+    }
+  }
+  
+
+  imgUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const img = document.createElement('img');
+      img.src = event.target.result;
+      img.classList.add('user-img', 'msg', 'user-msg');
+      chatBody.appendChild(img);
+
+      appendMessage("Nice picture!", "bot");
+    }
+    reader.readAsDataURL(file);
+  });
+
+  // 🎤 Speech Recognition
+  let recognition;
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      sendMessage(transcript);
+    };
+
+    recognition.onerror = function(event) {
+      appendMessage("Speech error: " + event.error, "bot");
+    };
+
+  } else {
+    micBtn.disabled = true;
+    micBtn.innerText = "🚫";
+    appendMessage("Speech recognition not supported in this browser.", "bot");
+  }
+
+  micBtn.addEventListener("click", () => {
+    if (recognition) {
+      recognition.start();
+      appendMessage("🎤 Listening...", "bot");
+    }
+  });
+
 
   // Magnetic hover effect for hero/primary buttons
   document.addEventListener('pointermove', (e) => {
@@ -238,30 +352,10 @@
   els.process.disabled = true;
 
   try {
-      let lastApiResponse = null;
-      let data=null
-      // 2️⃣ Second API Call: Summary
-      const summaryRes = await fetch(API_BASE + '/summary', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: transcript }), // you can also pass `payload` if needed
-      });
-
-      if (!summaryRes.ok) throw new Error('Summary API HTTP ' + summaryRes.status);
-
-      const summaryData = await summaryRes.json();
-
-      // Update summary panel
-      if (summaryData && summaryData.summary) {
-          updateSummary(summaryData.summary)
-      }
-
-      updateStatus('Done', 'done');
-
 
       // 1️⃣ First API Call: Entity extraction
       try {
-        const res = await fetch(API_BASE + '/', {
+        const res = await fetch(API_BASE + '/transcription', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: transcript }),
@@ -275,7 +369,8 @@
         lastApiResponse=data;
       
         // Populate all sections with JSON
-        populateFormFromJson(data);
+        populateFormFromJson(data["JSON"]);
+        updateSummary(data["Summary"]);
       
       } catch (error) {
         console.error('Error fetching API:', error);
