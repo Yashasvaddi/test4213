@@ -500,3 +500,4 @@ z-index: -1; transition: opacity .2s ease; opacity: 0;
 .btn:hover, .icon-btn:hover { transform: none; box-shadow: none; }
 .btn-dot { animation: none; }
 }
+
