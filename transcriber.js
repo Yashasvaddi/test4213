@@ -2,9 +2,6 @@
 (function () {
   const API_BASE = 'https://api.doctorsapp.in/ai';
 
-  let user_id=parseInt(prompt("Enter your user_id"))
-  let session_id=parseInt(prompt("Enter your session_id"))
-
   const els = {
     start: document.getElementById('btnStart'),
     stop: document.getElementById('btnStop'),
@@ -29,11 +26,17 @@
   const micBtn = document.getElementById('micBtn');
   const chatbot_send_button=document.getElementById('chatbot_send_button');
 
+  let count=0;
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {  // Check if Enter was pressed
       e.preventDefault();      // Prevent form submission/reload
       const message = userInput.value.trim();
       if (message !== "") {
+        if(count==0){
+           let user_id=parseInt(prompt("Enter your user_id"));
+           let session_id=parseInt(prompt("Enter your session_id"));
+          count++;
+        }
         sendMessage(message);  // Your function to handle the message
         userInput.value = "";  // Clear input
       }
@@ -124,8 +127,6 @@
     }
   }
 
-  requestMicPermission();
-
   // 🎤 Speech Recognition
   let recognition;
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -134,7 +135,7 @@
     recognition.lang = "en-US";
     recognition.continuous = false;
     recognition.interimResults = false;
-
+    requestMicPermission();
     recognition.onresult = function(event) {
       const transcript = event.results[0][0].transcript;
       sendMessage(transcript);
@@ -793,4 +794,5 @@ window.onload = setTodayDate;
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
+
 
