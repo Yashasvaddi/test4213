@@ -26,18 +26,32 @@
   const imgUpload = document.getElementById('imgUpload');
   const micBtn = document.getElementById('micBtn');
   const chatbot_send_button=document.getElementById('chatbot_send_button');
-  
-  let count=0;
+  const login_savebutton=document.getElementById("save_session_button")
+
+  login_savebutton.addEventListener('click',saveSession)
+
+
+  function saveSession() {
+    user_id = document.getElementById("user_id").value;
+    session_id = document.getElementById("session_id").value;
+
+    if(!user_id || !session_id) {
+        alert("Please enter both User ID and Session ID!");
+        return;
+    }
+
+    localStorage.setItem("user_id", user_id);
+    localStorage.setItem("session_id", session_id);
+
+    // Hide overlay
+    document.getElementById("overlay").style.display = "none";
+}
+
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {  // Check if Enter was pressed
       e.preventDefault();      // Prevent form submission/reload
       const message = userInput.value.trim();
       if (message !== "") {
-        if(count==0||!(user_id&&session_id)){
-           user_id=parseInt(prompt("Enter your user_id"));
-           session_id=parseInt(prompt("Enter your session_id"));
-          count++;
-        }
         sendMessage(message);  // Your function to handle the message
         userInput.value = "";  // Clear input
       }
@@ -47,27 +61,8 @@
  chatbot_send_button.addEventListener("click", () => {
   const message = userInput.value.trim();
   if (message === "") return; // ignore empty messages
-
-  // Ask for IDs if first time or IDs not set
-  if (count === 0 || !(user_id && session_id)) {
-    const userInputValue = prompt("Enter your user_id");
-    const sessionInputValue = prompt("Enter your session_id");
-
-    user_id = userInputValue !== null ? parseInt(userInputValue) : null;
-    session_id = sessionInputValue !== null ? parseInt(sessionInputValue) : null;
-
-    if (isNaN(user_id) || isNaN(session_id)) {
-      alert("Invalid IDs. Please enter numeric values.");
-      return; // stop sending message
-    }
-
-    count++;
-  }
-
-  // Send the message
+  
   sendMessage(message);
-
-  // Clear input
   userInput.value = "";
 });
   
@@ -409,7 +404,7 @@
         const res = await fetch(API_BASE + '/transcription', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: transcript }),
+          body: JSON.stringify({ text: transcript, user_id:user_id, session_id:session_id}),
         });
       
         if (!res.ok) {
@@ -818,7 +813,6 @@ window.onload = setTodayDate;
   els.clear.addEventListener('click', clearAll);
   els.process.addEventListener('click', processTranscript);
 })();
-
 
 
 
