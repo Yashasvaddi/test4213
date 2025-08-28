@@ -24,6 +24,15 @@
     <script defer src="transcriber.js"></script>
   </head>
   <body>
+    <div id="overlay">
+      <div id="overlay-box">
+        <h3>Enter Session Details</h3>
+        <input class="input1" type="number" id="session_id" placeholder="Session ID"><br>
+        <input class="input1" type="number" id="user_id" placeholder="User ID"><br>
+        <!-- <input type="password" id="password" placeholder="Password (optional)"><br> -->
+        <button id="save_session_button" class="password_button">Start Session</button>
+      </div>
+    </div>
     <header class="site-header" role="banner">
       <nav class="container nav" aria-label="Primary">
         <div class="brand">
@@ -77,7 +86,7 @@
             <button id="micBtn">🎤</button>
             <input type="file" id="imgUpload" accept="image/*" style="display:none" />
             <input type="text" id="userInput" placeholder="Type a message..." />
-            <button type="button" onclick="sendMessage()" id="chatbot_send_button">Send</button>
+            <button type="button" id="chatbot_send_button">Send</button>
           </div>
         </div>
         </article>
@@ -169,6 +178,5 @@
     </footer>
   </body>
 </html>
-
 
 
